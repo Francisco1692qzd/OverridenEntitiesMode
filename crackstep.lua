@@ -203,3 +203,6 @@ function CrackStep()
     entity.CanCollide = false
     game.Debris:AddItem(s, 5)
 end
+
+
+pcall(CrackStep)
