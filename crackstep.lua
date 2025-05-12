@@ -112,9 +112,9 @@ function CrackStep()
     local info = TweenInfo.new(1)
     for i, v in pairs(workspace.CurrentRooms:GetDescendants()) do
         if v:IsA("Light") then
-            game.TweenService:Create(v, info, colorLight):Play()
+            game:GetService("TweenService"):Create(v, info, colorLight):Play()
             if v.Parent.Name == "LightFixture" then
-                game.TweenService:Create(v.Parent, info, colorLight):Play()
+                game:GetService("TweenService"):Create(v.Parent, info, colorLight):Play()
             end
         end
     end
@@ -189,7 +189,7 @@ function CrackStep()
                         fakejays:Play()
                         fakejays.Completed:Wait()
                         ambruhspeed = storer
-                        if room.Name == tostring(game.ReplicatedStorage.GameData.LatestRoom.Value then
+                        if room.Name == tostring(game.ReplicatedStorage.GameData.LatestRoom.Value) then
                             room:WaitForChild("Door").ClientOpen:FireServer()
                         end
                     end
