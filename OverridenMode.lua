@@ -5,7 +5,7 @@ local initiator = mainUI:WaitForChild("Initiator")
 local main_Game = require(initiator:WaitForChild("Main_Game"))
 
 -- Mensagem de inicialização
-main_Game.caption("Overriden Mode Executed, Good Luck Fellow player ".. char.Name, 4)
+main_Game.caption("Overriden Mode Executed, Good Luck Fellow player ".. char.Name .."...", 4)
 
 -- Criação segura do BoolValue de controle
 local bool = workspace:FindFirstChild("hardcoreInit")
@@ -15,6 +15,9 @@ if not bool then
 	bool.Value = false
 	bool.Parent = workspace
 end
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Francisco1692qzd/OverridenEntitiesMode/refs/heads/main/lightReplacer.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Francisco1692qzd/OverridenEntitiesMode/refs/heads/main/nodes.lua"))()
 
 if bool.Value then return end
 
