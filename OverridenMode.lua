@@ -16,7 +16,7 @@ if not bool then
 	bool.Parent = workspace
 end
 
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Francisco1692qzd/OverridenEntitiesMode/refs/heads/main/lightReplacer.lua"))()
+--loadstring(game:HttpGet("https://raw.githubusercontent.com/Francisco1692qzd/OverridenEntitiesMode/refs/heads/main/lightReplacer.lua"))() -- do not uncomment this unsless you know what you are doing an not making the game hard to know when entities spawn or not!
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Francisco1692qzd/OverridenEntitiesMode/refs/heads/main/nodes.lua"))()
 
 if bool.Value then return end
@@ -54,6 +54,7 @@ end
 task.spawn(function()
 	while task.wait(math.random(50, 120)) do
 		if canSpawn() then
+			game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
 			safeSpawn("https://raw.githubusercontent.com/Francisco1692qzd/OverridenEntitiesMode/refs/heads/main/obscura.lua")
 		end
 	end
@@ -78,6 +79,7 @@ end)
 task.spawn(function()
 	while task.wait(math.random(30, 60)) do
 		if canSpawn() then
+			game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
 			safeSpawn("https://raw.githubusercontent.com/Francisco1692qzd/OverridenEntitiesMode/refs/heads/main/eyes.lua")
 		end
 	end
