@@ -112,9 +112,9 @@ function CrackStep()
     local info = TweenInfo.new(1)
     for i, v in pairs(workspace.CurrentRooms:GetDescendants()) do
         if v:IsA("Light") then
-            game:GetService("TweenService"):Create(v, info, colorLight):Play()
+            game.TweenService:Create(v, info, colorLight):Play()
             if v.Parent.Name == "LightFixture" then
-                game:GetService("TweenService"):Create(v.Parent, info, colorLight):Play()
+                game.TweenService:Create(v.Parent, info, colorLight):Play()
             end
         end
     end
