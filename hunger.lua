@@ -14,7 +14,6 @@ end
 function LoadCustomInstance(source, parent)
 	local model
 
-	-- Normalize GitHub URL if needed
 	local function NormalizeGitHubURL(url)
 		if url:match("^https://github.com/.+%.rbxm$") and not url:find("?raw=true") then
 			return url .. "?raw=true"
@@ -24,9 +23,7 @@ function LoadCustomInstance(source, parent)
 
 	while task.wait() and not model do
 		if type(source) == "number" or tostring(source):match("^%d+$") then
-			-- Asset ID loading
 			print("🔄 Trying to load model from Asset ID: " .. tostring(source))
-
 			local success, result = pcall(function()
 				return game:GetObjects("rbxassetid://" .. tostring(source))[1]
 			end)
@@ -34,12 +31,11 @@ function LoadCustomInstance(source, parent)
 			if success and result then
 				model = result
 			else
-				print("❌ [LoadCustomInstance]: Failed to load asset ID " .. tostring(source) .. ". Retrying... 🔄")
+				print("❌ Failed to load asset ID " .. tostring(source))
 				task.wait(0.5)
 			end
 
 		elseif type(source) == "string" and source:match("^https?://") and source:match("%.rbxm") then
-			-- GitHub URL loading
 			local url = NormalizeGitHubURL(source)
 			print("🌐 Trying to load .rbxm model from URL: " .. url)
 
@@ -54,7 +50,7 @@ function LoadCustomInstance(source, parent)
 			if success and result then
 				model = result
 			else
-				print("❌ [LoadCustomInstance]: Failed to load from URL. Retrying... 🔄")
+				print("❌ Failed to load from URL. Retrying...")
 				task.wait(0.5)
 			end
 
@@ -76,7 +72,7 @@ function LoadCustomInstance(source, parent)
 				model:SetAttribute("LoadedByExecutor", true)
 			end)
 
-			print("✅ [LoadCustomInstance]: Model " .. model.Name .. " successfully loaded into " .. model.Parent:GetFullName())
+			print("✅ Model " .. model.Name .. " loaded into " .. model.Parent:GetFullName())
 		end
 	end
 
@@ -84,70 +80,99 @@ function LoadCustomInstance(source, parent)
 end
 
 function GetRoom()
-        local gruh = workspace.CurrentRooms
-        return gruh:FindFirstChild(game.ReplicatedStorage.GameData.LatestRoom.Value)
+	local gruh = workspace.CurrentRooms
+	return gruh:FindFirstChild(game.ReplicatedStorage.GameData.LatestRoom.Value)
 end
 
 function GetLastRoom()
-    local gruh = workspace.CurrentRooms
-    return gruh[game.ReplicatedStorage.GameData.LatestRoom.Value + 1]
+	local gruh = workspace.CurrentRooms
+	return gruh[game.ReplicatedStorage.GameData.LatestRoom.Value + 1]
 end
 
 local moduleScripts = {
-        Module_Events = require(game.ReplicatedStorage.ClientModules.Module_Events),
-        Main_Game = require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game)
+	Module_Events = require(game.ReplicatedStorage.ClientModules.Module_Events),
+	Main_Game = require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game)
 }
 
 function Hunger()
 	local s = LoadCustomInstance("https://github.com/Francisco1692qzd/OverridenEntitiesMode/blob/main/shockeryellow.rbxm?raw=true", workspace)
-	local entity = s:FindFirstChild("Shockeeer")
+	local entity = s and s:FindFirstChild("Shockeeer")
 
 	if not entity then
 		warn("❌ Entity 'Shockeeer' not found in model!")
 		return
 	end
 
-  entity.CFrame = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0,0,-15)
-  entity.PlaySound.TimePosition = 0
-  entity.PlaySound:Play()
+	entity.Name = "Hunger"
+	entity.CFrame = game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame * CFrame.new(0, 0, -15)
 
-	local hum = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-	local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+	local playSound = entity:FindFirstChild("PlaySound")
+	if playSound then
+		playSound.TimePosition = 0
+		playSound:Play()
+	end
+
+	local horrorScream = entity:FindFirstChild("HORROR SCREAM 15")
+
+	local player = game.Players.LocalPlayer
+	local hum = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+	local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
 	if not hum or not root then return end
 
 	local lookingStart = nil
+	local runService = game:GetService("RunService")
+	local tweenService = game:GetService("TweenService")
+	local debris = game:GetService("Debris")
 
-	game:GetService("RunService").RenderStepped:Connect(function()
-		if not entity or not entity:FindFirstChild("PrimaryPart") then return end
+	local connection
+	connection = runService.RenderStepped:Connect(function()
+		if not entity or not entity:IsDescendantOf(s) then
+			if connection then connection:Disconnect() end
+			return
+		end
 
-		local directionToEntity = (entity.PrimaryPart.Position - root.Position).Unit
-		local playerLookVector = root.CFrame.LookVector
-		local dot = directionToEntity:Dot(playerLookVector)
+		local cameraLook = camera.CFrame.LookVector
+		local toEntity = (entity.Position - camera.CFrame.Position).Unit
+		local dot = cameraLook:Dot(toEntity)
 
-		-- Tá olhando? (dot perto de 1 = olhando)
 		if dot > 0.7 then
 			if not lookingStart then
 				lookingStart = tick()
-			elseif tick() - lookingStart >= 4 then
-				-- TWEEN PRA FRENTE E DANO!
-				local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+			elseif tick() - lookingStart >= 3 then
+				-- Efeito de avanço e dano
+				local tweenInfo = TweenInfo.new(0.7, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
 				local goal = {CFrame = root.CFrame + Vector3.new(0, 0, -3)}
-				local tween = game:GetService("TweenService"):Create(entity.PrimaryPart, tweenInfo, goal)
-        entity["HORROR SCREAM 15"]:Play()
-				tween:Play()
+				local tween = tweenService:Create(entity, tweenInfo, goal)
 
+				if horrorScream then
+					horrorScream:Play()
+				end
+
+				tween:Play()
 				tween.Completed:Connect(function()
-					if hum then hum.Health = hum.Health - 50 end
+					if hum then
+						hum.Health = hum.Health - 25
+                                                camShake:Shake(cameraShaker.Presets.Explosion)
+                                                firesignal(game.ReplicatedStorage.RemotesFolder.DeathHint.OnClientEvent, {
+                                                        "You died to Hunger...",
+                                                        "He is Just Like Shocker...",
+                                                        "Dont Look at it Or It Stuns you!"
+                                                }, "Blue")
+                                                game.ReplicatedStorage:FindFirstChild("Player_".. game.Players.LocalPlayer.Character.Name).Total.DeathCause = "Hunger"
+					end
 				end)
+
+                                entity.Anchored = false
+			        entity.CanCollide = false
+				-- Desconectar após ataque
+				if connection then connection:Disconnect() end
 			end
 		else
 			-- Não tá olhando: sumir
 			lookingStart = nil
-
 			entity.Anchored = false
-      entity.CanCollide = false
-
-			game:GetService("Debris"):AddItem(entity, 5)
+			entity.CanCollide = false
+			debris:AddItem(entity, 5)
 		end
 	end)
 end
