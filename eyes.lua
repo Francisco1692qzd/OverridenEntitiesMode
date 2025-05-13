@@ -125,7 +125,7 @@ function Eyes()
 		local lookVector = hrp.CFrame.LookVector
 
 		local dot = lookVector:Dot(directionToTarget)
-		return dot > 1 -- adjust for sensitivity of "looking"
+		return dot > 0.6 -- adjust for sensitivity of "looking"
 	end
 
 	task.spawn(function()
