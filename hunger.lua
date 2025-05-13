@@ -146,6 +146,9 @@ function Hunger()
 
 				if horrorScream then
 					horrorScream:Play()
+                                        task.delay(1.6, function()
+                                                horrorScream:Stop()
+                                        end)
 				end
 
 				tween:Play()
