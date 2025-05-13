@@ -77,7 +77,7 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-	while task.wait(math.random(30, 60)) do
+	while task.wait(math.random(100, 140)) do
 		if canSpawn() then
 			game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
 			safeSpawn("https://raw.githubusercontent.com/Francisco1692qzd/OverridenEntitiesMode/refs/heads/main/eyes.lua")
