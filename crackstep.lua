@@ -151,11 +151,10 @@ function CrackStep()
                         "You died to who you call CrackStep...",
                         "It can check Every moment that you Hide or move...",
                         "Maybe try not Hiding Or Not Moving Next Time?"
-                    })
+                    }, "Blue")
                     game.ReplicatedStorage.GameStats:FindFirstChild("Player_".. v.Character.Name).Total.DeathCause = "CrackStep"
                 end
-                if canSeeTarget(v.Character, 65) then
-                    if v.Character.Humanoid.MoveDirection.Magnitude > 0 then
+                if canSeeTarget(v.Character, 65) and v.Character.Humanoid.MoveDirection.Magnitude > 0 then
                         v.Character:FindFirstChild("Humanoid"):TakeDamage(100)
                         v.Character:SetAttribute("Alive", false)
                         v.Character:SetAttribute("Stunned", true)
@@ -163,9 +162,8 @@ function CrackStep()
                             "You died to who you call CrackStep...",
                             "It can check Every moment that you Hide or move...",
                             "Maybe try not Hiding Or Not Moving Next Time?"
-                        })
+                        }, "Blue")
                         game.ReplicatedStorage.GameStats:FindFirstChild("Player_".. v.Character.Name).Total.DeathCause = "CrackStep"
-                    end
                 end
                 if v.Character ~= nil and v.Character:FindFirstChild("HumanoidRootPart") and (entity.Position - v.Character:FindFirstChild("HumanoidRootPart").Position).magnitude <= 80 then
                     camShake:ShakeOnce(10, 25, 0, 2, 1, 6)
