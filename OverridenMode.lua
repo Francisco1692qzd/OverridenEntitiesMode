@@ -86,7 +86,7 @@ coroutine.wrap(function()
 	end
 end)
 
-coroutine.wrap(function()
+task.spawn(function()
 	while task.wait(math.random(60, 120)) do
 		if canSpawn() then
 			safeSpawn("https://raw.githubusercontent.com/Francisco1692qzd/OverridenEntitiesMode/refs/heads/main/hunger.lua")
