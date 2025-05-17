@@ -84,122 +84,151 @@ function LoadCustomInstance(source, parent)
 end
 
 function GetRoom()
-        local gruh = workspace.CurrentRooms
-        return gruh:FindFirstChild(game.ReplicatedStorage.GameData.LatestRoom.Value)
+	local gruh = workspace.CurrentRooms
+	return gruh:FindFirstChild(game.ReplicatedStorage.GameData.LatestRoom.Value)
 end
 
 function GetLastRoom()
-    local gruh = workspace.CurrentRooms
-    return gruh[game.ReplicatedStorage.GameData.LatestRoom.Value + 1]
+	local gruh = workspace.CurrentRooms
+	return gruh[game.ReplicatedStorage.GameData.LatestRoom.Value + 1]
 end
 
 local moduleScripts = {
-        Module_Events = require(game.ReplicatedStorage.ClientModules.Module_Events),
-        Main_Game = require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game)
+	Module_Events = require(game.ReplicatedStorage.ClientModules.Module_Events),
+	Main_Game = require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game)
 }
 
 function CrackStep()
-    local s = LoadCustomInstance("https://github.com/Francisco1692qzd/OverridenEntitiesMode/blob/main/crackstep.rbxm?raw=true", workspace)
-    s.Parent = workspace
-    local entity = s:FindFirstChildWhichIsA("BasePart")
-    local killed = false
-    local ambruhheight = Vector3.new(0,2,0)
-    local ambruhspeed = 65
-    local DEF_SPEED = 99999
-    local storer = ambruhspeed
-    camShake:Shake(cameraShaker.Presets.Earthquake)
-    local colorLight = {Color = Color3.fromRGB(255,255,255)}
-    local info = TweenInfo.new(1)
-    for i, v in pairs(workspace.CurrentRooms:GetDescendants()) do
-        if v:IsA("Light") then
-            game.TweenService:Create(v, info, colorLight):Play()
-            if v.Parent.Name == "LightFixture" then
-                game.TweenService:Create(v.Parent, info, colorLight):Play()
-            end
-        end
-    end
-    local function canSeeTarget(target, size)
-        if killed == true then
-            return
-        end
+	local s = LoadCustomInstance("https://github.com/Francisco1692qzd/OverridenEntitiesMode/blob/main/crackstep.rbxm?raw=true", workspace)
+	s.Parent = workspace
+	local entity = s:FindFirstChildWhichIsA("BasePart")
+	local killed = false
+	local ambruhheight = Vector3.new(0,2,0)
+	local ambruhspeed = 65
+	local DEF_SPEED = 99999
+	local storer = ambruhspeed
+	camShake:Shake(cameraShaker.Presets.Earthquake)
+	local colorLight = {Color = Color3.fromRGB(255,255,255)}
+	local info = TweenInfo.new(1)
+	for i, v in pairs(workspace.CurrentRooms:GetDescendants()) do
+		if v:IsA("Light") then
+			game.TweenService:Create(v, info, colorLight):Play()
+			if v.Parent.Name == "LightFixture" then
+				game.TweenService:Create(v.Parent, info, colorLight):Play()
+			end
+		end
+	end
+	local function canSeeTarget(target, size)
+		if killed == true then
+			return
+		end
 
-        local origin = entity.Position
-        local direction = (target.HumanoidRootPart.Position - origin).unit * size
-        local ray = Ray.new(origin, direction)
+		local origin = entity.Position
+		local direction = (target.HumanoidRootPart.Position - origin).unit * size
+		local ray = Ray.new(origin, direction)
 
-        local hit, pos = workspace:FindPartOnRay(ray, entity)
+		local hit, pos = workspace:FindPartOnRay(ray, entity)
 
-        if hit then
-            if hit:IsDescendantOf(target) then
-                killed = true
-                return true
-            end
-        else
-            return false
-        end
-    end
-    wait(1)
-    spawn(function()
-        while entity ~= nil and entity.Parent and s ~= nil and s.Parent do wait(0.1)
-            local v = game.Players.LocalPlayer
-            if v.Character ~= nil then
-                if canSeeTarget(v.Character, 65) and v.Character:GetAttribute("Hiding") then
-                    v.Character:FindFirstChild("Humanoid"):TakeDamage(100)
-                    v.Character:SetAttribute("Alive", false)
-                    v.Character:SetAttribute("Stunned", true)
-                    firesignal(game.ReplicatedStorage.RemotesFolder.DeathHint.OnClientEvent, {
-                        "You died to who you call CrackStep...",
-                        "It can check Every moment that you Hide or move...",
-                        "Maybe try not Hiding Or Not Moving Next Time?"
-                    }, "Blue")
-                    game.ReplicatedStorage.GameStats:FindFirstChild("Player_".. v.Character.Name).Total.DeathCause = "CrackStep"
-                end
-                if canSeeTarget(v.Character, 65) and v.Character.Humanoid.MoveDirection.Magnitude > 0 then
-                        v.Character:FindFirstChild("Humanoid"):TakeDamage(100)
-                        v.Character:SetAttribute("Alive", false)
-                        v.Character:SetAttribute("Stunned", true)
-                        firesignal(game.ReplicatedStorage.RemotesFolder.DeathHint.OnClientEvent, {
-                            "You died to who you call CrackStep...",
-                            "It can check Every moment that you Hide or move...",
-                            "Maybe try not Hiding Or Not Moving Next Time?"
-                        }, "Blue")
-                        game.ReplicatedStorage.GameStats:FindFirstChild("Player_".. v.Character.Name).Total.DeathCause = "CrackStep"
-                end
-                if v.Character ~= nil and v.Character:FindFirstChild("HumanoidRootPart") and (entity.Position - v.Character:FindFirstChild("HumanoidRootPart").Position).magnitude <= 80 then
-                    camShake:ShakeOnce(10, 25, 0, 2, 1, 6)
-                end
-            end
-        end
-    end)
+		if hit then
+			if hit:IsDescendantOf(target) then
+				killed = true
+				return true
+			end
+		else
+			return false
+		end
+	end
+	wait(1)
+	spawn(function()
+		while entity ~= nil and entity.Parent and s ~= nil and s.Parent do
+			wait(0.1)
+			local v = game.Players.LocalPlayer
 
-    ambruhspeed = DEF_SPEED
-    local gruh = workspace.CurrentRooms
-    for i = 1, game.ReplicatedStorage.GameData.LatestRoom.Value do
-        if gruh:FindFirstChild(i) then
-            local room = gruh[i]
-            if room ~= nil and room:FindFirstChild("Nodes") then
-                local nodes = room:FindFirstChild("Nodes")
-                for v = 1, #nodes:GetChildren() do
-                    if nodes:FindFirstChild(v) then
-                        local waypoint = nodes[v]
-                        local dist = (entity.Position - waypoint.Position).magnitude
-                        local fakejays = game.TweenService:Create(entity, TweenInfo.new(GetTime(dist, ambruhspeed), Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0,false,0), {CFrame = waypoint.CFrame + ambruhheight})
-                        fakejays:Play()
-                        fakejays.Completed:Wait()
-                        ambruhspeed = storer
-                        if room.Name == tostring(game.ReplicatedStorage.GameData.LatestRoom.Value) then
-                            room:WaitForChild("Door").ClientOpen:FireServer()
-                        end
-                    end
-                end
-            end
-        end
-    end
+			if v.Character then
+				local humanoid = v.Character:FindFirstChild("Humanoid")
+				local hrp = v.Character:FindFirstChild("HumanoidRootPart")
 
-    workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value]:WaitForChild("Door").ClientOpen:FireServer()
-    entity.Anchored = false
-    entity.CanCollide = false
-    game.Debris:AddItem(s, 5)
+				if humanoid and hrp then
+					local canSee = canSeeTarget(v.Character, 65)
+					local hiding = v.Character:GetAttribute("Hiding")
+					local moving = humanoid.MoveDirection.Magnitude > 0
+
+					-- Kill if hiding and CrackStep sees you
+					if canSee and hiding then
+						humanoid:TakeDamage(100)
+						v.Character:SetAttribute("Alive", false)
+						v.Character:SetAttribute("Stunned", true)
+
+						firesignal(game.ReplicatedStorage.RemotesFolder.DeathHint.OnClientEvent, {
+							"You died to who you call CrackStep...",
+							"It can check every moment that you Hide or move...",
+							"Maybe try not Hiding or Not Moving next time?"
+						}, "Blue")
+
+						task.delay(0.3, function()
+							local stats = game.ReplicatedStorage.GameStats:FindFirstChild("Player_" .. v.Character.Name)
+							if stats then
+								stats.Total.DeathCause = "CrackStep"
+							end
+						end)
+					end
+
+					-- Kill if moving and CrackStep sees you
+					if canSee and moving then
+						humanoid:TakeDamage(100)
+						v.Character:SetAttribute("Alive", false)
+						v.Character:SetAttribute("Stunned", true)
+
+						firesignal(game.ReplicatedStorage.RemotesFolder.DeathHint.OnClientEvent, {
+							"You died to who you call CrackStep...",
+							"It can check every moment that you Hide or move...",
+							"Maybe try not Hiding or Not Moving next time?"
+						}, "Blue")
+						
+						task.delay(0.3, function()
+							local stats = game.ReplicatedStorage.GameStats:FindFirstChild("Player_" .. v.Character.Name)
+							if stats then
+								stats.Total.DeathCause = "CrackStep"
+							end
+						end)
+					end
+
+					-- Camera shake if close
+					if (entity.Position - hrp.Position).Magnitude <= 80 then
+						camShake:ShakeOnce(10, 25, 0, 2, 1, 6)
+					end
+				end
+			end
+		end
+	end)
+	ambruhspeed = DEF_SPEED
+	local gruh = workspace.CurrentRooms
+	for i = 1, game.ReplicatedStorage.GameData.LatestRoom.Value do
+		if gruh:FindFirstChild(i) then
+			local room = gruh[i]
+			if room ~= nil and room:FindFirstChild("Nodes") then
+				local nodes = room:FindFirstChild("Nodes")
+				for v = 1, #nodes:GetChildren() do
+					if nodes:FindFirstChild(v) then
+						local waypoint = nodes[v]
+						local dist = (entity.Position - waypoint.Position).magnitude
+						local fakejays = game.TweenService:Create(entity, TweenInfo.new(GetTime(dist, ambruhspeed), Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0,false,0), {CFrame = waypoint.CFrame + ambruhheight})
+						fakejays:Play()
+						fakejays.Completed:Wait()
+						ambruhspeed = storer
+						if room.Name == tostring(game.ReplicatedStorage.GameData.LatestRoom.Value) then
+							room:WaitForChild("Door").ClientOpen:FireServer()
+						end
+					end
+				end
+			end
+		end
+	end
+
+	workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value]:WaitForChild("Door").ClientOpen:FireServer()
+	entity.Anchored = false
+	entity.CanCollide = false
+	game.Debris:AddItem(s, 5)
 end
 
 
