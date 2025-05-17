@@ -17,7 +17,7 @@ if not bool then
 end
 
 --loadstring(game:HttpGet("https://raw.githubusercontent.com/Francisco1692qzd/OverridenEntitiesMode/refs/heads/main/lightReplacer.lua"))() -- do not uncomment this unsless you know what you are doing an not making the game hard to know when entities spawn or not!
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Francisco1692qzd/OverridenEntitiesMode/refs/heads/main/nodes.lua"))()
+pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Francisco1692qzd/OverridenEntitiesMode/refs/heads/main/nodes.lua"))() end)
 
 if bool.Value then return end
 
@@ -48,10 +48,11 @@ local function canSpawn()
 	return not workspace:FindFirstChild("SeekMovingNewClone") 
 		and not workspace:FindFirstChild("SeekMoving") 
 		and not game.ReplicatedStorage:WaitForChild("FloorReplicated"):WaitForChild("SeekMusic").IsPlaying
+		and not workspace.CurrentRooms:FindFirstChild("50")
 end
 
 -- Spawn automático das entidades com delays aleatórios
-task.spawn(function()
+coroutine.wrap(function()
 	while task.wait(math.random(50, 120)) do
 		if canSpawn() then
 			game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
@@ -60,7 +61,7 @@ task.spawn(function()
 	end
 end)
 
-task.spawn(function()
+coroutine.wrap(function()
 	while task.wait(math.random(80, 170)) do
 		if canSpawn() then
 			safeSpawn("https://raw.githubusercontent.com/Francisco1692qzd/OverridenEntitiesMode/refs/heads/main/trauma.lua")
@@ -68,7 +69,7 @@ task.spawn(function()
 	end
 end)
 
-task.spawn(function()
+coroutine.wrap(function()
 	while task.wait(math.random(140, 200)) do
 		if canSpawn() then
 			safeSpawn("https://raw.githubusercontent.com/Francisco1692qzd/OverridenEntitiesMode/refs/heads/main/crackstep.lua")
@@ -76,7 +77,7 @@ task.spawn(function()
 	end
 end)
 
-task.spawn(function()
+coroutine.wrap(function()
 	while task.wait(math.random(100, 140)) do
 		if canSpawn() then
 			game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
@@ -85,7 +86,7 @@ task.spawn(function()
 	end
 end)
 
-task.spawn(function()
+coroutine.wrap(function()
 	while task.wait(math.random(60, 120)) do
 		if canSpawn() then
 			safeSpawn("https://raw.githubusercontent.com/Francisco1692qzd/OverridenEntitiesMode/refs/heads/main/hunger.lua")
