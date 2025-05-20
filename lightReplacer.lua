@@ -82,12 +82,14 @@ function ReplaceAllLights()
 				print("💡 Replacing lights in: " .. currentRoom.Name)
 				for _, lightModel in pairs(light_Fixtures:GetChildren()) do
 					if lightModel:IsA("Model") and lightModel.Name:find("Light") then
-						local pos = lightModel:GetPivot()
-						lightModel:Destroy()
-						local newLight = fakeLightTemplate:Clone()
-						newLight.Parent = light_Fixtures
-						newLight.Name = "LightFixture"
-						newLight:PivotTo(pos)
+						if not game.Workspace:FindFirstChild("Ambience_Dark").IsPlaying then
+							local pos = lightModel:GetPivot()
+							lightModel:Destroy()
+							local newLight = fakeLightTemplate:Clone()
+							newLight.Parent = light_Fixtures
+							newLight.Name = "LightStand"
+							newLight:PivotTo(pos)
+						end
 					end
 				end
 			end
