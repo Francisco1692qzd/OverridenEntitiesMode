@@ -61,7 +61,7 @@ local entities = {
 
 -- Cria todas as corrotinas de spawn
 for _, entity in ipairs(entities) do
-	task.defer(function()
+	coroutine.wrap(function()
 		while task.wait(math.random(entity.min, entity.max)) do
 			if canSpawn() then
 				if entity.waitForRoom then
