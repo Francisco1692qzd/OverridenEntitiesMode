@@ -106,6 +106,6 @@ end
 -- New rooms added
 workspace.CurrentRooms.ChildAdded:Connect(function(room)
 	room.ChildAdded:Wait()
-	task.wait(0.5)
+	task.wait(0.7)
 	generateNodesForRoom(room)
 end)
