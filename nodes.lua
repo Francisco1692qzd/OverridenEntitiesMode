@@ -8,7 +8,7 @@ local function replicate(room)
 			nodes.Parent = room
 			nodes.Name = "Nodes"
 		end
-		local valueString = "StringValue"
+		local valueString = Instance.new("StringValue", room)
 		valueString.Name = "jiggle my ballz lsplash"
 		valueString.Value = "jiggle it pls."
 	end
