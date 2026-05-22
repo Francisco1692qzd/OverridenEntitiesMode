@@ -45,7 +45,7 @@ local function replicate(room)
 	local function attemptReplication(retryCount)
 		retryCount = retryCount or 0
 		local maxRetries = 5
-		local delayBetweenRetries = 0.5 -- seconds
+		local delayBetweenRetries = 1.2 -- seconds
 		
 		local existingNodes = room:FindFirstChild("PathfindNodes")
 		if existingNodes then
@@ -75,7 +75,7 @@ end
 -- Watch for new rooms being generated
 currentRooms.ChildAdded:Connect(function(child)
 	if child:IsA("Model") or tonumber(child.Name) then
-		task.wait(0.2) -- Small delay before processing new room
+		task.wait(0.5) -- Small delay before processing new room
 		replicate(child)
 	end
 end)
@@ -83,7 +83,7 @@ end)
 -- Initial scan for rooms already there
 for _, room in ipairs(currentRooms:GetChildren()) do
 	if room:IsA("Model") or tonumber(room.Name) then
-		task.wait(0.1) -- Small delay between each room to prevent overwhelming
+		task.wait(0.4) -- Small delay between each room to prevent overwhelming
 		replicate(room)
 	end
 end
