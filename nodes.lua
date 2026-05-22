@@ -38,30 +38,44 @@ local function replicate(room)
 		valueString.Value = "jiggle it pls."
 		valueString.Parent = room
 		
-		print("Nodes replicated for Room: " .. room.Name .. " - Found " .. #nodes:GetChildren() .. " nodes")
+		print("Nodes replicated for Room: " .. room.Name .. " - Found " .. #pathfindNodes:GetChildren() .. " nodes")
 	end
 
-	-- 1. Check if PathfindNodes already exists IN the room
-	local existingNodes = room:FindFirstChild("PathfindNodes")
-	if existingNodes then
-		setupNodes(existingNodes)
-	else
-		print("Waiting for PathfindNodes in room: " .. room.Name)
-	end
-
-	-- 2. Listen for PathfindNodes being added later
-	local connection
-	connection = room.ChildAdded:Connect(function(child)
-		if child.Name == "PathfindNodes" then
-			setupNodes(child)
-			connection:Disconnect()
+	-- Give time for PathfindNodes to be created
+	local function attemptReplication(retryCount)
+		retryCount = retryCount or 0
+		local maxRetries = 5
+		local delayBetweenRetries = 0.5 -- seconds
+		
+		local existingNodes = room:FindFirstChild("PathfindNodes")
+		if existingNodes then
+			setupNodes(existingNodes)
+		elseif retryCount < maxRetries then
+			print("Waiting for PathfindNodes in " .. room.Name .. " (attempt " .. (retryCount + 1) .. "/" .. maxRetries .. ")")
+			task.wait(delayBetweenRetries)
+			attemptReplication(retryCount + 1)
+		else
+			print("Failed to find PathfindNodes in " .. room.Name .. " after " .. maxRetries .. " attempts")
+			
+			-- Keep listening just in case it appears later
+			local connection
+			connection = room.ChildAdded:Connect(function(child)
+				if child.Name == "PathfindNodes" then
+					setupNodes(child)
+					connection:Disconnect()
+				end
+			end)
 		end
-	end)
+	end
+	
+	-- Start the replication attempt with delay
+	attemptReplication()
 end
 
 -- Watch for new rooms being generated
 currentRooms.ChildAdded:Connect(function(child)
 	if child:IsA("Model") or tonumber(child.Name) then
+		task.wait(0.2) -- Small delay before processing new room
 		replicate(child)
 	end
 end)
@@ -69,6 +83,7 @@ end)
 -- Initial scan for rooms already there
 for _, room in ipairs(currentRooms:GetChildren()) do
 	if room:IsA("Model") or tonumber(room.Name) then
+		task.wait(0.1) -- Small delay between each room to prevent overwhelming
 		replicate(room)
 	end
 end
