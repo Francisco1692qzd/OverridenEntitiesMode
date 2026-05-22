@@ -1,47 +1,37 @@
 local currentRooms = workspace.CurrentRooms
 
 local function replicate(room)
-	if not room or not room.Parent then return end
-
-	-- Internal function to handle the cloning once nodes exist
-	local function setupNodes(roomNodes)
-		if room:FindFirstChild("Nodes") then return end -- Already done
-		
-		local nodes = roomNodes:Clone()
-		nodes.Name = "Nodes"
-		nodes.Parent = room
-		
-		-- Your custom identification tags
-		local valueString = Instance.new("StringValue", room)
-		valueString.Name = "jiggle my ballz lsplash"
-		valueString.Value = "jiggle it pls."
-		
-		print("Nodes replicated for Room: " .. room.Name)
+	task.wait(0.1) -- Give time for PathfindNodes to load
+	
+	local pathfindNodes = room:FindFirstChild("PathfindNodes")
+	if not pathfindNodes then
+		print("No PathfindNodes in", room.Name)
+		return
 	end
-
-	-- 1. Check if they already exist
-	local existingNodes = room:FindFirstChild("PathfindNodes")
-	if existingNodes then
-		setupNodes(existingNodes)
+	
+	-- Check if already replicated
+	if room:FindFirstChild("Nodes") then 
+		print("Already replicated", room.Name)
+		return 
 	end
-
-	-- 2. Listen for them being added or changed later
-	room.ChildAdded:Connect(function(child)
-		if child.Name == "PathfindNodes" then
-			setupNodes(child)
-		end
-	end)
+	
+	-- Clone and create
+	local nodes = pathfindNodes:Clone()
+	nodes.Name = "Nodes"
+	nodes.Parent = room
+	
+	local tag = Instance.new("StringValue")
+	tag.Name = "jiggle_my_ballz_lsplash"
+	tag.Value = "jiggle it pls."
+	tag.Parent = room
+	
+	print("Successfully replicated", #nodes:GetChildren(), "nodes in", room.Name)
 end
 
--- Watch for new rooms being generated
-currentRooms.ChildAdded:Connect(function(child)
-	-- Only run if the child is a room (usually named by number)
-	if tonumber(child.Name) or child:IsA("Model") then
-		replicate(child)
-	end
-end)
-
--- Initial scan for rooms already there
+-- Replicate existing rooms
 for _, room in ipairs(currentRooms:GetChildren()) do
 	replicate(room)
 end
+
+-- Watch for new rooms
+currentRooms.ChildAdded:Connect(replicate)
